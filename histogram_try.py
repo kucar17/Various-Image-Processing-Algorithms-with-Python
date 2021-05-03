@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+import os
+
 def getHistogram(image, bin):  
 
     # Initializing the dictionary and the first key of it:
@@ -15,53 +17,56 @@ def getHistogram(image, bin):
     # Initializing the start and stop values:
     start = 0
     stop = start + increment
+    print("Creating the histogram...")
     
     while True:
-
-        # Adding the numbers to the key one after another in a single list, according to the user input:
+        # Creating the array which will keep the sets of pixel values according to the bin:
         for i in range(start, stop):
-            #print(start)
-            #print(stop)
             arrayToAppend = np.arange(start, stop, 1).tolist()
 
+        # Creating a new key in the dictionary and assigning the most recent set values to it:
         rangeDict["set" + str(int(start/increment))] = arrayToAppend
 
-        # When 255 is reached in the dictionary, loop will terminate:
+        # If the most recently added set has 255 in it, that means we completed creating our set:
         if rangeDict["set" + str(int(start/increment))][-1] == 255:
             break
-
+        
+        # We are assigning one more of the most recently added set value as the start,
+        # and adding increment to it before assigning to stop:
         else:
-            # Assigning the greatest value in the most recently added key to the start:
             start = rangeDict["set" + str(int(start/increment))][-1] + 1
-            # Assigning start, plus the increment
             stop = start + increment
-            # Initializing the next key:
-            #rangeDict["set" + str(i + 1)] = []
-    # Printing the dictionary for checking:
-    #print(rangeDict)
 
-    for i in range(len(rangeDict)):
-        rangeDict["set" + str(i)].append(0)
-
+    # Initializing the plotArray which is going to consist of the frequency values of each set:
     plotArray = np.zeros((bin,), dtype=int)
+    # Creating the x axis of the histogram, according to the bin input:
+    xAxes = list(range(bin))
 
+    # Evaluating which set each pixel in the image belongs to,
+    # and then increasing frequency value of the corresponding set by 1:
     for i in range(image.shape[0]):
-        print("i = " + str(i))
         for j in range(image.shape[1]):
-            #print("j = " + str(j))
             for k in range(len(rangeDict)):
-                #print("k = " + str(k))
-                for t in range(len(rangeDict["set" + str(k)])):
-                    #print("t = " + str(t))
-                    if image[i][j] == rangeDict["set" + str(k)][t]:
-                        #rangeDict["set" + str(i)][-1] = rangeDict["set" + str(i)][-1] + 1
-                        plotArray[k] += 1
+                if image[i][j] in rangeDict["set" + str(k)]:
+                    plotArray[k] += 1
+                    continue
+        # Since operation takes some time, process percentage is going to be printed out:
+        #percent = int(i / image.shape[0] * 100)
+        #print(str(percent) + "% completed.")
+        #os.system('cls')
 
-    plt.hist((plotArray))
-    return rangeDict
+    # Creating the histogram using a bar array:
+    plt.bar(xAxes, plotArray, width=1.0)
+    plt.xlabel('Pixels according to the bin value')
+    plt.ylabel('Frequency')
+    plt.show()
+    # Returning the plotArray:
+    return plotArray
 
 # main:
-image = cv2.imread("hamburger.jpg")
+image = cv2.imread("algo_t.png")
 image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-levels = getHistogram(image, 128)
+levels = getHistogram(image, 256)
 print(levels)
+#print(levels)
+plt.hist(image.ravel(),256,[0,256]); plt.show()
