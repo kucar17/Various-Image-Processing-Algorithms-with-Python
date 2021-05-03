@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 
 import os
 
+def matchingKeys(dictionary, searchString):
+    return [key for key,val in dictionary.items() if any(searchString in s for s in val)]
+
 def getHistogram(image, bin):  
 
     # Initializing the dictionary and the first key of it:
@@ -46,10 +49,19 @@ def getHistogram(image, bin):
     # and then increasing frequency value of the corresponding set by 1:
     for i in range(image.shape[0]):
         for j in range(image.shape[1]):
-            for k in range(len(rangeDict)):
-                if image[i][j] in rangeDict["set" + str(k)]:
-                    plotArray[k] += 1
-                    continue
+            index = list(rangeDict.keys())[list(rangeDict.values()).index(image[i][j])]
+            #print()
+            #index = matchingKeys(rangeDict, str(image[i][j]))
+            #print(index)
+            #index = list(rangeDict.keys())[list(rangeDict.values()).index(image[i][j])]
+            index = int(str(index.split("t")[1]))
+            print(str(image[i][j]) + " -> " + str(index))
+            plotArray[index] += 1
+
+            #for k in range(len(rangeDict)):
+                #if image[i][j] in rangeDict["set" + str(k)]:
+                #    plotArray[k] += 1
+                #    continue
         # Since operation takes some time, process percentage is going to be printed out:
         #percent = int(i / image.shape[0] * 100)
         #print(str(percent) + "% completed.")
