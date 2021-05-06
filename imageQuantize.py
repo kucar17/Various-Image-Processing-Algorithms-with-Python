@@ -5,8 +5,9 @@ import numpy as np
 # After the quantizing process, function records the quantized image to the working directory.
 def quantizeImage(inimg, quantizationLevel):
     # Initializing the quantized image:
-    quantizedImage = 127 * np.ones((inimg.shape[0], inimg.shape[1]),dtype=np.uint16)
+    quantizedImage = np.zeros((inimg.shape[0], inimg.shape[1]),dtype=np.uint16)
     # Defining the quantization levels:
+    # 
     quantizationRange = createRange(0, 255, int(256/quantizationLevel))
     # Scanning the each pixel of the original image,
     # and assigning the quantized pixel value to the corresponding pixel:
@@ -14,8 +15,11 @@ def quantizeImage(inimg, quantizationLevel):
         for j in range(0, inimg.shape[1]):
             index = findClosestMatch(inimg[i][j], quantizationRange)
             quantizedImage[i][j] = quantizationRange[index]
-    # Saving the quantized image to the working directory:
+    # Casting the array to 8-bit unsigned integer type to avoid any data-type conflict. 
+    quantizedImage = quantizedImage.astype((np.uint8))
+    # Saving the quantized image to the working directory and returning:
     cv2.imwrite("quantized.jpg", quantizedImage)
+    return quantizedImage
 
 
 # This is a helper function for the quantizeImage function, which finds the corresponding pixel value,

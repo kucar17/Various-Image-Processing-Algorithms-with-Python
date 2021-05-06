@@ -12,5 +12,8 @@ def grayLevelSlice(inimg, beginningPoint, finishPoint, resultLevel):
                 inimg[i][j] = resultLevel
             else:
                 inimg[i][j] = 0
-    # Saving the gray-level sliced image to the working directory:
+    # Casting the array to 8-bit unsigned integer type to avoid any data-type conflict.
+    inimg = inimg.astype((np.uint8))
+    # Saving the gray-level sliced image to the working directory and returning:
     cv2.imwrite("gray_level_sliced.jpg", inimg)
+    return inimg

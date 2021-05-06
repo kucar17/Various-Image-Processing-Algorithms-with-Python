@@ -5,6 +5,9 @@ import numpy as np
 # After the transform, function records the quantized image to the working directory.
 def powerLawTranform(inimg, power):
     # Applying the power law transformation via. broadcasting
-    pTransformedImage = 1 * inimg**power
-    # Saving the transformed image to the working directory:
+    pTransformedImage = np.array(255*(inimg / 255) ** power)
+    # Casting the array to 8-bit unsigned integer type to avoid any data-type conflict.
+    pTransformedImage = pTransformedImage.astype((np.uint8))
+    # Saving the transformed image to the working directory and returning:
     cv2.imwrite("power_law.jpg", pTransformedImage)
+    return pTransformedImage
